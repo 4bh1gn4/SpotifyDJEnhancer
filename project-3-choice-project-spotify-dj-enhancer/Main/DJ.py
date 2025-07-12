@@ -5,7 +5,7 @@ from datetime import datetime
 from flask_cors import CORS, cross_origin
 
 from flask import Flask, redirect, request, jsonify, session
-app = Flask(__name__)
+application = Flask(__name__)
 #CORS(app)  # Apply CORS globally to all routes
 
 CORS(app, resources={r"/playlists": {"origins": "*"}}) 
