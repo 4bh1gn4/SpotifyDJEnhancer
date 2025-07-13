@@ -42,11 +42,11 @@ function PlaylistTracks() {
 
         if (!accessToken) {
             console.log('No access token, redirect to login');
-            window.location.href = 'http://localhost:5000/login';
+            window.location.href = `${process.env.REACT_APP_API_URL}/login`;
             return;
         }
 
-        let url = 'http://localhost:5000/playlisttracks';
+        let url = `${process.env.REACT_APP_API_URL}/playlisttracks`;
         if (minValence !== undefined && maxValence !== undefined) {
             url += `?min_valence=${minValence}&max_valence=${maxValence}`;
         }
@@ -113,7 +113,7 @@ function PlaylistTracks() {
         }
 
         const accessToken = localStorage.getItem('access-token');
-        fetch('http://localhost:5000/create_playlist', {
+        fetch(`${process.env.REACT_APP_API_URL}/create_playlist`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
