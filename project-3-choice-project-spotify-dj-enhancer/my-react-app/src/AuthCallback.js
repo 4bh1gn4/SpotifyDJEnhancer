@@ -17,7 +17,7 @@ function AuthCallback() {
             //console.log(`Auth code obtained: ${code}`);
             console.log('Initiating fetch call to /exchange-code endpoint');            
 
-            fetch('http://localhost:5000/exchange-code', {
+            fetch(`${process.env.REACT_APP_API_URL}/exchange-code`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
