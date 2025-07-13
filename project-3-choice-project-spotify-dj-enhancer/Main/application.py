@@ -8,15 +8,15 @@ from flask import Flask, redirect, request, jsonify, session
 application = Flask(__name__)
 #CORS(app)  # Apply CORS globally to all routes
 
-CORS(app, resources={r"/playlists": {"origins": "*"}}) 
-CORS(app, resources={r"/login": {"origins": "*"}}) 
-CORS(app, resources={r"/exchange-code": {"origins": "*"}}) 
-CORS(app, resources={r"/playlistTracks": {"origins": "*"}}) 
-CORS(app, resources={r"/sayHello": {"origins": "*"}})
-CORS(app, resources={r"/create_playlist": {"origins": "*"}}) 
+CORS(application, resources={r"/playlists": {"origins": "*"}}) 
+CORS(application, resources={r"/login": {"origins": "*"}}) 
+CORS(application, resources={r"/exchange-code": {"origins": "*"}}) 
+CORS(application, resources={r"/playlistTracks": {"origins": "*"}}) 
+CORS(application, resources={r"/sayHello": {"origins": "*"}})
+CORS(application, resources={r"/create_playlist": {"origins": "*"}}) 
 
 
-app.secret_key = "poop"
+application.secret_key = "poop"
   
 #Artur
 #CLIENT_ID = "1bc370f16429437f97fc412355c754ed"
@@ -35,31 +35,31 @@ APIBASE_URL = "https://api.spotify.com/v1/"
 
 #print(CLIENT_ID, CLIENT_SECRET)
 
-@app.before_request
+@application.before_request
 def before_request():
     print(f"Request received: {request.method} {request.url}")
     #print(f"Headers: {request.headers}")
     #print(f"Body: {request.get_data(as_text=True)}")
 
-@app.after_request
+@application.after_request
 def after_request(response):
     print(f"Request to {request.path} completed with status {response.status_code}")
     return response
 
-@app.errorhandler(Exception)
+@application.errorhandler(Exception)
 def handle_exception(e):
     print(f"An error occurred: {str(e)}")
     return jsonify({'error': 'Internal Server Error'}), 500
 
 
-@app.route('/')
+@application.route('/')
 
 def index():
     return "Spotify app <a href='/login'>Log in with spotify</a>"
 
-@app.route('/login')
+@application.route('/login')
 
-@app.route('/login')
+@application.route('/login')
 def login():
     scope = "user-read-private user-read-email playlist-modify-private playlist-modify-public"
     parameters = {
@@ -74,7 +74,7 @@ def login():
 
 
 
-@app.route('/playlists')
+@application.route('/playlists')
 def get_playlists():
 
     #access_token = session.get('access_token')
@@ -116,7 +116,7 @@ def get_playlists():
     return jsonify(response_data)
 
 
-@app.route('/playlisttracks')
+@application.route('/playlisttracks')
 def get_playlist_tracks():
 
     auth_header = request.headers.get('Authorization')
@@ -182,7 +182,7 @@ def get_playlist_tracks():
     return jsonify(all_tracks)
 
 
-@app.route('/create_playlist', methods=['POST'])
+@application.route('/create_playlist', methods=['POST'])
 def create_playlist():
     print("executing create playlist")
     data = request.json
@@ -241,7 +241,7 @@ def create_playlist():
 
 
 
-@app.route('/exchange-code', methods=['POST'])
+@application.route('/exchange-code', methods=['POST'])
 def exchange_code():
     print("Starting exchange code process")
     data = request.json
@@ -279,11 +279,11 @@ def exchange_code():
 
 
     
-@app.route('/sayHello')
+@application.route('/sayHello')
 # This decorator allows CORS on this route, overriding the global CORS configuration
 #@cross_origin()
 def hello_world():
     return jsonify(message='Hello World from Flask server')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    application.run(host='0.0.0.0', debug=True)
