@@ -21,13 +21,13 @@ function Playlist() {
             const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
             window.location.href = authUrl;
             */
-            window.location.href = 'http://localhost:5000/login';
+            window.location.href = `${process.env.REACT_APP_API_URL}/login`;
             return;            
         }
 
         console.log (`proceeding to make a call to playlist call on the server`)
         
-        fetch('http://localhost:5000/playlists', {
+        fetch(`${process.env.REACT_APP_API_URL}/playlists`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         })
         .then(response=> {
