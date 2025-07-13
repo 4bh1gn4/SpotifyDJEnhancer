@@ -8,19 +8,20 @@ from flask import Flask, redirect, request, jsonify, session
 application = Flask(__name__)
 #CORS(app)  # Apply CORS globally to all routes
 
-CORS(application, resources={r"/playlists": {"origins": "*"}}) 
-CORS(application, resources={r"/login": {"origins": "*"}}) 
-CORS(application, resources={r"/exchange-code": {"origins": "*"}}) 
-CORS(application, resources={r"/playlistTracks": {"origins": "*"}}) 
-CORS(application, resources={r"/sayHello": {"origins": "*"}})
-CORS(application, resources={r"/create_playlist": {"origins": "*"}}) 
+#CORS(application, resources={r"/playlists": {"origins": "*"}}) 
+#CORS(application, resources={r"/login": {"origins": "*"}}) 
+#CORS(application, resources={r"/exchange-code": {"origins": "*"}}) 
+#CORS(application, resources={r"/playlistTracks": {"origins": "*"}}) 
+#CORS(application, resources={r"/sayHello": {"origins": "*"}})
+#CORS(application, resources={r"/create_playlist": {"origins": "*"}}) 
+
+
+CORS(application, origins=["https://main.dqn9mdx08gdpc.amplifyapp.com"])
 
 
 application.secret_key = "poop"
   
-#Artur
-#CLIENT_ID = "1bc370f16429437f97fc412355c754ed"
-#CLIENT_SECRET = "3f405f686e41418e90dbe149a667b333"
+
 #Abhigna
 CLIENT_ID = "ed679e2536ba42b788035db8e4e25930"
 CLIENT_SECRET = "0e5c46e53c8047f282b37c07cbcad0c1"
