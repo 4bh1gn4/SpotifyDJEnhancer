@@ -4,7 +4,7 @@ function HelloWorld() {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        fetch('http://localhost:5000/sayHello') // Make sure the port matches your Flask server
+        fetch(`${process.env.REACT_APP_API_URL}/sayHello`)
             .then(response => response.json())
             .then(data => {
                 console.log(data.message);
