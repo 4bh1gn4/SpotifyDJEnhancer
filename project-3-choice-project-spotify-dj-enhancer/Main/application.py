@@ -26,7 +26,7 @@ CLIENT_ID = "ed679e2536ba42b788035db8e4e25930"
 CLIENT_SECRET = "0e5c46e53c8047f282b37c07cbcad0c1"
 
 #REDIRECT_URL = "http://localhost:5000/callback"
-REDIRECT_URL = "http://localhost:3000/auth/callback"
+REDIRECT_URL = "https://main.dqn9mdx08gdpc.amplifyapp.com/auth/callback"
 
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
