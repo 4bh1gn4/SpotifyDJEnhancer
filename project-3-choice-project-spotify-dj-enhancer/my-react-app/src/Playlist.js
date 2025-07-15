@@ -1,3 +1,21 @@
+/**
+ * Playlist.js
+ * 
+ * Displays the user's Spotify playlists by fetching them from the Flask backend.
+ * Handles authentication by checking for an access token in localStorage.
+ * If the user is not authenticated, redirects to the backend login endpoint.
+ * 
+ * Key Features:
+ * - Fetches playlists from the backend /playlists endpoint using the stored access token.
+ * - Handles authentication and redirects to login if the token is missing or invalid.
+ * - Displays playlists as a list.
+ * - Includes "Study" and "Work Out" buttons for future playlist filtering or actions.
+ * 
+ * Usage:
+ * - Used as a route target for /playlist in React Router.
+ * - Relies on the backend to handle Spotify API communication and authentication.
+ */
+
 import React, { useState, useEffect } from 'react';
 
 function Playlist() {

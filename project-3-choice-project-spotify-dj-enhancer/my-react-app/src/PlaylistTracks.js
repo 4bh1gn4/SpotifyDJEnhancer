@@ -1,3 +1,22 @@
+/**
+ * PlaylistTracks.js
+ * 
+ * Displays tracks from the user's Spotify playlists, allows filtering by valence (mood),
+ * and enables the user to select tracks and create a new playlist on Spotify.
+ * 
+ * Key Features:
+ * - Fetches tracks from the backend /playlisttracks endpoint using the stored access token.
+ * - Allows filtering tracks by valence using a slider (react-range).
+ * - Lets users select tracks and create a new playlist with a custom name.
+ * - Handles authentication and redirects to login if the token is missing.
+ * - Displays each track's name, artist, valence, and a link to listen on Spotify.
+ * - Shows a link to the newly created playlist after creation.
+ * 
+ * Usage:
+ * - Used as a route target for /playlist-tracks in React Router.
+ * - Relies on the backend to handle Spotify API communication and authentication.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Range } from 'react-range';
 import './PlaylistTracks.css';
@@ -36,6 +55,11 @@ function PlaylistTracks() {
         fetchData(valenceRange[0], valenceRange[1]);;
     };
 
+    /**
+     * Fetches playlist tracks from the backend, optionally filtered by valence.
+     * If no access token is found, redirects to login.
+     * Updates the tracks and track count state.
+     */
     const fetchData = (minValence, maxValence) => {
         console.log(valence);
         const accessToken = localStorage.getItem('access-token');
@@ -76,6 +100,10 @@ function PlaylistTracks() {
         .catch(error => console.error('Error fetching playlist tracks:', error));
     };
 
+    /**
+     * Handles selection and deselection of tracks by their ID.
+     * Updates the selectedTracks state.
+     */
     const handleTrackSelect = (trackId) => {
         console.log('track id selected:', trackId)
         const newSelectedTracks = new Set(selectedTracks);
@@ -91,6 +119,10 @@ function PlaylistTracks() {
         
     };
 
+    /**
+     * Sends selected tracks and playlist name to the backend to create a new playlist.
+     * Opens the new playlist in a new tab if successful.
+     */
     const createPlaylist = () => {
         console.log('in create playlist')
         console.log('createPlaylist - selected tracks: ', selectedTracks)
@@ -134,11 +166,17 @@ function PlaylistTracks() {
         .catch(error => console.error('Error creating playlist:', error));
     };
 
+    /**
+     * Example handler for a "Workout" button (could be extended for preset filters).
+     */
     const handleWorkoutClick = () => {
         console.log('Workout button clicked');
         fetchData(0.6);
     };
 
+    /**
+     * Example handler for a "Study" button (could be extended for preset filters).
+     */
     const handleStudyClick = () => {
         console.log('Study button clicked');
         fetchData(0.4);
