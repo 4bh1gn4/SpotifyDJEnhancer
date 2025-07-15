@@ -1,4 +1,18 @@
+"""
+Spotify DJ Enhancer Flask Application
 
+This Flask backend provides endpoints for authenticating with Spotify, retrieving user playlists,
+filtering tracks by valence (mood), and creating new playlists with selected tracks.
+It is designed to work with a React frontend hosted on AWS Amplify.
+
+Key Features:
+- Spotify OAuth2 authentication flow
+- Fetching user playlists and tracks
+- Filtering tracks by valence (happiness/mood)
+- Creating new playlists and adding tracks
+- CORS enabled for secure frontend-backend communication
+
+"""
 import requests
 import urllib
 from datetime import datetime
@@ -7,6 +21,7 @@ from flask_cors import CORS, cross_origin
 from flask import Flask, redirect, request, jsonify, session
 application = Flask(__name__)
 
+#CORS configuration for when code was hosted locally
 #CORS(app)  # Apply CORS globally to all routes
 #CORS(application, resources={r"/playlists": {"origins": "*"}}) 
 #CORS(application, resources={r"/login": {"origins": "*"}}) 
@@ -15,20 +30,20 @@ application = Flask(__name__)
 #CORS(application, resources={r"/sayHello": {"origins": "*"}})
 #CORS(application, resources={r"/create_playlist": {"origins": "*"}}) 
 
-
+# Enable CORS for the specified frontend origin
 CORS(application, origins=["https://main.dqn9mdx08gdpc.amplifyapp.com"])
-
 
 application.secret_key = "A4F8071D3B9F1A12E1F9C8FA0987C9BC"
   
-
-#Abhigna
+# Spotify API credentials 
 CLIENT_ID = "ed679e2536ba42b788035db8e4e25930"
 CLIENT_SECRET = "0e5c46e53c8047f282b37c07cbcad0c1"
 
+#Previously locally hosted redirect URL
 #REDIRECT_URL = "http://localhost:5000/callback"
-REDIRECT_URL = "https://main.dqn9mdx08gdpc.amplifyapp.com/auth/callback"
 
+# Spotify endpoints
+REDIRECT_URL = "https://main.dqn9mdx08gdpc.amplifyapp.com/auth/callback"
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 APIBASE_URL = "https://api.spotify.com/v1/"
@@ -38,30 +53,43 @@ APIBASE_URL = "https://api.spotify.com/v1/"
 
 @application.before_request
 def before_request():
+    """
+    Logs every incoming HTTP request for debugging and monitoring.
+    """
+    #Log incoming requests for debugging.
     print(f"Request received: {request.method} {request.url}")
     #print(f"Headers: {request.headers}")
     #print(f"Body: {request.get_data(as_text=True)}")
 
 @application.after_request
 def after_request(response):
+    """
+    Logs the completion of each HTTP request, including the status code.
+    """
     print(f"Request to {request.path} completed with status {response.status_code}")
     return response
 
 @application.errorhandler(Exception)
 def handle_exception(e):
+    """
+    Catch-all error handler to log exceptions and return a generic error response.
+    """
     print(f"An error occurred: {str(e)}")
     return jsonify({'error': 'Internal Server Error'}), 500
 
-
 @application.route('/')
-
 def index():
+    """
+    Root endpoint. Provides a simple HTML link to start Spotify authentication.
+    """
     return "Spotify app <a href='/login'>Log in with spotify</a>"
 
 @application.route('/login')
-
-@application.route('/login')
 def login():
+    """
+    Redirects the user to Spotify's OAuth2 authorization page.
+    The user will be asked to log in and authorize the app.
+    """
     scope = "user-read-private user-read-email playlist-modify-private playlist-modify-public"
     parameters = {
         'client_id': CLIENT_ID,
@@ -73,11 +101,17 @@ def login():
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(parameters)}"
     return redirect(auth_url)
 
-
-
 @application.route('/playlists')
 def get_playlists():
+    """
+    Fetches the authenticated user's playlists from Spotify.
 
+    Request:
+        - Requires 'Authorization: Bearer <access_token>' header.
+
+    Response:
+        - JSON list of playlists, or error message if authentication fails.
+    """
     #access_token = session.get('access_token')
     #expires_in = session.get('expires_in', 0)
 
@@ -116,10 +150,22 @@ def get_playlists():
     #return jsonify(response.json())
     return jsonify(response_data)
 
-
 @application.route('/playlisttracks')
 def get_playlist_tracks():
+    """
+    Fetches tracks from all user playlists and filters them by valence (mood).
 
+    Query Parameters:
+        - min_valence (float, optional): Minimum valence value (default 0)
+        - max_valence (float, optional): Maximum valence value (default 1)
+
+    Request:
+        - Requires 'Authorization: Bearer <access_token>' header.
+
+    Response:
+        - JSON list of tracks with valence within the specified range.
+        - Each track includes id, name, artist, uri, url, and valence.
+    """
     auth_header = request.headers.get('Authorization')
     valence_filter = request.args.get('valence', type=float)
     
@@ -179,12 +225,23 @@ def get_playlist_tracks():
                         'valence': valence
                     })
 
-
     return jsonify(all_tracks)
-
 
 @application.route('/create_playlist', methods=['POST'])
 def create_playlist():
+    """
+    Creates a new playlist for the user and adds selected tracks.
+
+    Request:
+        - JSON body: {
+            "track_uris": [list of Spotify track URIs],
+            "name": "Playlist Name" (optional)
+          }
+        - Requires 'Authorization: Bearer <access_token>' header.
+
+    Response:
+        - JSON with the new playlist's Spotify URL, or error message.
+    """
     print("executing create playlist")
     data = request.json
     track_uris = data.get('track_uris', [])
@@ -221,7 +278,7 @@ def create_playlist():
         print("Failed to create playlist")
         return jsonify({'error': 'Could not create playlist'}), 400
 
-
+    # Add tracks to the new playlist
     if playlist_id:
         print("Created playlist successfully")
         add_tracks_response = requests.post(
@@ -238,12 +295,17 @@ def create_playlist():
     print(f"New playlist created: {playlist_url}")  # Print the playlist URL to the console
     return jsonify({'playlist_url': playlist_url})
 
-
-
-
-
 @application.route('/exchange-code', methods=['POST'])
 def exchange_code():
+    """
+    Exchanges the Spotify authorization code for an access token.
+
+    Request:
+        - JSON body: { "code": "<authorization_code>" }
+
+    Response:
+        - JSON with access_token, refresh_token, and expires_in, or error message.
+    """
     print("Starting exchange code process")
     data = request.json
     code = data.get('code')
@@ -278,13 +340,17 @@ def exchange_code():
             print("Error in token exchange:", token_info.get('error_description'))
             return jsonify({'error': 'Failed to exchange code for token', 'details': token_info}), 400
 
-
     
 @application.route('/sayHello')
 # This decorator allows CORS on this route, overriding the global CORS configuration
 #@cross_origin()
 def hello_world():
+    """
+    Simple test endpoint to verify the Flask server is running.
+    Returns a JSON greeting.
+    """
     return jsonify(message='Hello World from Flask server')
 
 if __name__ == '__main__':
+    # Run the Flask app on all interfaces, with debug mode enabled for development.
     application.run(host='0.0.0.0', debug=True)
