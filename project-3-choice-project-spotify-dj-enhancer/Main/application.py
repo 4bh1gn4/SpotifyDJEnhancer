@@ -6,8 +6,8 @@ from flask_cors import CORS, cross_origin
 
 from flask import Flask, redirect, request, jsonify, session
 application = Flask(__name__)
-#CORS(app)  # Apply CORS globally to all routes
 
+#CORS(app)  # Apply CORS globally to all routes
 #CORS(application, resources={r"/playlists": {"origins": "*"}}) 
 #CORS(application, resources={r"/login": {"origins": "*"}}) 
 #CORS(application, resources={r"/exchange-code": {"origins": "*"}}) 
@@ -19,7 +19,7 @@ application = Flask(__name__)
 CORS(application, origins=["https://main.dqn9mdx08gdpc.amplifyapp.com"])
 
 
-application.secret_key = "poop"
+application.secret_key = "A4F8071D3B9F1A12E1F9C8FA0987C9BC"
   
 
 #Abhigna
