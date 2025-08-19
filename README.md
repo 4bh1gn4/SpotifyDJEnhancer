@@ -148,7 +148,7 @@ Future versions will include:
 
 ## 🙌 Credits
 
-Created by [@4bh1gn4](https://github.com/4bh1gn4)  
+Developed by [@4bh1gn4](https://github.com/4bh1gn4)  
 Powered by [Spotify Web API](https://developer.spotify.com)
 
 ---
